@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+int main()
+{
+    int fd;
+    char * myfifo = "/tmp/myfifo";
+    mkfifo(myfifo, 0666); // Kreiraj nazvanu cev (FIFO)
+
+    char str1[80], str2[80];
+    while (1) {
+        // Otvaranje FIFO-a za čitanje
+        fd = open(myfifo, O_RDONLY);
+        // Čitanje poruke iz FIFO-a
+        read(fd, str1, 80);
+
+        printf("Primljena poruka: %s\n", str1);
+        close(fd);
+
+        // Otvaranje FIFO-a za pisanje
+        fd = open(myfifo, O_WRONLY);
+
+        printf("Pošalji poruku: ");
+        fgets(str2, 80, stdin);
+
+        // Pisanje poruke u FIFO
+        write(fd, str2, sizeof(str2));
+        close(fd);
+    }
+
+    return 0;
+}
+// ActionScript Document
